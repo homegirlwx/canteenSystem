@@ -1,6 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -11,7 +9,7 @@
     ${user.userName},欢迎您进入Self-checkout canteen，您当前余额为${user.credits};
 </body>
 <body>
-  <form action="/Photo.html" method="POST" enctype="multipart/form-data">
+  <form action="/Photo" method="POST" enctype="multipart/form-data">
     <input type="file" name="fileName"/>
     <input type="submit" value="Upload"/>
   </form>
