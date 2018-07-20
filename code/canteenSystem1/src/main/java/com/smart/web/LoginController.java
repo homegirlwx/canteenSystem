@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sun.misc.BASE64Decoder;
 
 @RestController
 public class LoginController{
@@ -33,7 +34,10 @@ public class LoginController{
     @Value("${web.upload-path}")
     private String path;
 
-
+    @RequestMapping("/")
+    public ModelAndView index() {
+        return new ModelAndView("index");
+    }
 
     @RequestMapping(value = "/loginCheck")
     public User loginCheck(HttpServletRequest request,LoginCommand loginCommand){
@@ -52,7 +56,6 @@ public class LoginController{
         }
     }
 
-
     /**
      * 文件上传具体实现方法;
      *
@@ -62,6 +65,7 @@ public class LoginController{
     @RequestMapping(value = "/Photo", method = RequestMethod.POST)
     public String handleFileUpload(@RequestParam("fileName") MultipartFile file,  Map<String, Object> map) {
 
+        BASE64Decoder decoder = new BASE64Decoder();
         if (!file.isEmpty()) {
 
             // 要上传的目标文件存放路径
@@ -84,7 +88,8 @@ public class LoginController{
         }
     }
 
-    //显示图片的方法关键 匹配路径像 localhost:8080/b7c76eb3-5a67-4d41-ae5c-1642af3f8746.png
+
+    //显示图片
     @RequestMapping(value = "show", method = RequestMethod.GET)
     public ResponseEntity<?> showPhotos(String fileName) {
         try {

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Web camera page</title>
+</head>
+<body>
+	<input type="image" name="image1" src="Microsoft-Logo-2012.jpg" class="mr-image1" width="300" height="168">
+	<a href="http://www.baidu.com" accesskey="b"> homepage </a>
+	<p> <font size="7" color="red" align="center">Welcome to our self-checkout canteen</font></p>
+	<div class="mr-canteen">
+		<div class="mr-picbom">
+            <p>
+                <div class="mr-pic"><img align="center" src="canteen1.jpg" width="300" height="300" alt=""/></div>
+                <div class="mr-picleft"><img align="center" src="canteen2.jpg" width="300" height="300" alt=""/></div>
+                <div class="mr-picright"><img  align="center" src="canteen3.jpg" width="300" height="300" alt=""/></div>
+            </p>
+		</div>
+	</div>
+	<br></br>
+	<br></br>
+	<br></br>
+	<br></br>
+	<button type="button" onclick="alert('Welcome! Please wait ...')">Automatic</button>
+
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <p>
+        <button id="snap">截取图像</button>
+        <button id="close">关闭摄像头</button>
+        <button id="upload">上传图像</button>
+    </p>
+
+    <script type="text/javascript">
+        var aVideo=document.getElementById('video');
+
+        var aCanvas=document.getElementById('canvas');
+
+        var ctx=aCanvas.getContext('2d');
+
+    
+        navigator.getUserMedia  = navigator.getUserMedia ||
+
+                          navigator.webkitGetUserMedia ||
+
+                          navigator.mozGetUserMedia ||
+
+                          navigator.msGetUserMedia; //获取媒体对象，这里指摄像头
+
+        navigator.getUserMedia({video:true}, gotStream, noStream);
+        //参数1获取用户打开权限；参数二成功打开后调用，并传一个视频流对象，参数三打开失败后调用，传错误信息
+
+    
+        function gotStream(stream) {
+
+            video.src = URL.createObjectURL(stream);
+
+            video.onerror = function () {
+
+              stream.stop();
+
+            };
+
+            stream.onended = noStream;
+
+            video.onloadedmetadata = function () {
+
+              alert('摄像头成功打开！');
+
+            };
+
+        }
+
+        function noStream(err) {
+
+            alert(err);
+
+      }
+        document.getElementById("snap").addEventListener("click", function() 
+        {
+            ctx.drawImage(aVideo, 0, 0, 640, 480); //将获取视频绘制在画布上
+        });
+
+            // 关闭摄像头
+        document.getElementById("close").addEventListener('click', function() {
+            mediaStreamTrack && mediaStreamTrack.stop();
+        }, false);
+
+            // 上传截取的图像
+        document.getElementById("upload").addEventListener('click', function() {
+            jQuery.post('/Photo', {
+                snapData: canvas.toDataURL('image/png')
+            }).done(function(rs) {
+                rs = JSON.parse(rs);
+
+                console.log(rs);
+
+                uploaded.src = rs.path;
+            }).fail(function(err) {
+                console.log(err);
+            });
+        }, false);
+
+    </script>
+</body>
+</html>
