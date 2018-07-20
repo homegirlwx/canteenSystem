@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 public class ImageConversion {
-    public static boolean GenerateImage(String imgStr) { // 对字节数组字符串进行Base64解码并生成图片
+    public static boolean GenerateImage(String imgStr, String filename) { // 对字节数组字符串进行Base64解码并生成图片
         if (imgStr == null) // 图像数据为空
             return false;
 
@@ -24,15 +24,19 @@ public class ImageConversion {
                     bytes[i] += 256;
                 }
             }
+            String localPath = "F:/uploadphoto";
+
+            String imgFilePath = localPath + "/" + filename + ".jpg";
+
             // 生成jpeg图片
-            String imgFilePath = "F:/test22.png";// 新生成的图片
-            OutputStream out = new FileOutputStream(imgFilePath);
+
+           OutputStream out = new FileOutputStream(imgFilePath);
             out.write(bytes);
             out.flush();
             out.close();
             return true;
         } catch (Exception e) {
-            return false;
+          return false;
         }
 
     }

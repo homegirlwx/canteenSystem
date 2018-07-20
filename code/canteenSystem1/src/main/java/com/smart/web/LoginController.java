@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.ResourceLoader;
@@ -25,6 +27,7 @@ public class LoginController{
     private UserService userService;
 
     private final ResourceLoader resourceLoader;
+    //private AtomicLong atomiclong ;
 
     @Autowired
     public LoginController(ResourceLoader resourceLoader) {
@@ -34,10 +37,7 @@ public class LoginController{
     @Value("${web.upload-path}")
     private String path;
 
-    @RequestMapping("/")
-    public ModelAndView index() {
-        return new ModelAndView("index");
-    }
+
 
     @RequestMapping(value = "/loginCheck")
     public User loginCheck(HttpServletRequest request,LoginCommand loginCommand){
@@ -88,6 +88,13 @@ public class LoginController{
         }
     }
 
+    @RequestMapping(value = "/uploadPhoto", method = RequestMethod.POST)
+    public String sc( HttpServletRequest request, String sj) throws Exception {
+        //String filename = String.valueOf(atomiclong.getAndIncrement());
+        String filename = "20180720";
+        ImageConversion.GenerateImage(sj, filename);
+        return "sxt";
+    }
 
     //显示图片
     @RequestMapping(value = "show", method = RequestMethod.GET)
