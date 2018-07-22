@@ -1,5 +1,6 @@
 package com.smart.web;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.smart.domain.User;
 import com.smart.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,6 @@ public class LoginController{
     @RequestMapping(value = "/Photo", method = RequestMethod.POST)
     public String handleFileUpload(@RequestParam("fileName") MultipartFile file,  Map<String, Object> map) {
 
-        BASE64Decoder decoder = new BASE64Decoder();
         if (!file.isEmpty()) {
 
             // 要上传的目标文件存放路径
@@ -88,20 +88,20 @@ public class LoginController{
         }
     }
 
-    @RequestMapping(value = "/uploadPhoto", method = RequestMethod.POST)
-    public String sc( HttpServletRequest request, String sj) throws Exception {
+    @RequestMapping(value = "/uploadPhoto", produces = "application/json;charset=UTF-8")
+    public JsonImage sc( String sj ) throws Exception {
         //String filename = String.valueOf(atomiclong.getAndIncrement());
+        System.out.println(sj);
         String filename = "20180720";
-        ImageConversion.GenerateImage(sj, filename);
-        return "sxt";
+        return new JsonImage(ImageConversion.GenerateImage(sj, filename));
     }
 
     //显示图片
-    @RequestMapping(value = "show", method = RequestMethod.GET)
-    public ResponseEntity<?> showPhotos(String fileName) {
+    @RequestMapping(value = "show", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<?> showPhotos() {
         try {
             // 由于是读取本机的文件，file是一定要加上的， path是在application配置文件中的路径
-            return ResponseEntity.ok(resourceLoader.getResource("file:" + path + fileName));
+            return ResponseEntity.ok(resourceLoader.getResource("file:" + path + "20180720.jpg"));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

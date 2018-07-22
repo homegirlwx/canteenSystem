@@ -4,6 +4,7 @@
             <title>hello</title>   
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />   
              <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+
         </head>   
    
     <body>   
@@ -46,9 +47,23 @@
         var imgData=document.getElementById("canvas").toDataURL("image/png");
         var data=imgData.substr(22);
         debugger;
+            console.log(data);
+            console.info("upload it!");
         console.log(data);
-        $.post('/uploadPhoto',{'sj':data});
+       $.post('/uploadPhoto',{'sj':data}, function(rs){
+                console.info("in it");
+            $("img").attr("src","data:image/png;base64,"+ rs.data);
+                console.log(rs);
+
+
+
+            } );
+
     });
+
 </script>
+
+<img alt="" width=100 >
+
     </body>   
 </html>  

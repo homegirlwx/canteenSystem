@@ -4,6 +4,7 @@ com\smart\service\UserService.class
 com\smart\web\ImageConversion.class
 com\smart\dao\LoginLogDao.class
 com\smart\Application.class
+com\smart\web\JsonImage.class
 com\smart\domain\User.class
 com\smart\dao\UserDao.class
 com\smart\web\LoginController.class
