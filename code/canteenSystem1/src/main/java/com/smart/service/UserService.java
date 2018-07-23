@@ -16,13 +16,13 @@ public class UserService {
     private LoginLogDao loginLogDao;
 
 
-    public boolean hasMatchUser(String userName, String password) {
-        int matchCount =userDao.getMatchCount(userName, password);
+    public boolean hasMatchUser(String userAlias, String password) {
+        int matchCount =userDao.getMatchCount(userAlias, password);
         return matchCount > 0;
     }
 
-    public User findUserByUserName(String userName) {
-        return userDao.findUserByUserName(userName);
+    public User findUserByUserAlias(String userAlias) {
+        return userDao.findUserByUserAlias(userAlias);
     }
 
     @Transactional

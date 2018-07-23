@@ -23,16 +23,16 @@ public class UserDao {
         return jdbcTemplate.queryForObject(MATCH_COUNT_SQL, new Object[]{userName, password}, Integer.class);
     }
 
-    public User findUserByUserName(final String userName) {
-        String sqlStr = " SELECT user_id,user_name,credits "
-                + " FROM t_user WHERE user_name =? ";
+    public User findUserByUserAlias(final String userAlias) {
+        String sqlStr = " SELECT user_alias,user_name "
+                + " FROM t_user WHERE user_alias =? ";
         final User user = new User();
-        jdbcTemplate.query(sqlStr, new Object[]{userName},
+        jdbcTemplate.query(sqlStr, new Object[]{userAlias},
                 new RowCallbackHandler() {
                     public void processRow(ResultSet rs) throws SQLException {
-                        user.setUserId(rs.getInt("user_id"));
-                        user.setUserName(userName);
-                        user.setCredits(rs.getInt("credits"));
+                        user.setUserId(rs.getInt("user_alias"));
+                        user.setUserName(userAlias);
+                        //user.setCredits(rs.getInt("credits"));
                     }
                 });
         return user;

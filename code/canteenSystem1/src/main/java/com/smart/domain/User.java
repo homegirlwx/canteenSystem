@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class User implements Serializable{
-    private int userId;
+    private int userAlias;
 
     private String userName;
 
@@ -33,11 +33,11 @@ public class User implements Serializable{
     }
 
     public int getUserId() {
-        return userId;
+        return userAlias;
     }
 
     public void setUserId(int userId) {
-        this.userId = userId;
+        this.userAlias = userId;
     }
 
     public String getUserName() {

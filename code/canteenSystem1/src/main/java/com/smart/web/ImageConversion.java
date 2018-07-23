@@ -11,7 +11,7 @@ public class ImageConversion {
         //String str1= encoder.encode(base64String.getBytes());
         return null;
     }
-    public static String GenerateImage(String imgStr, String filename) { // 对字节数组字符串进行Base64解码并生成图片
+    public static String GenerateImage(String imgStr, String filename, String localPath) { // 对字节数组字符串进行Base64解码并生成图片
         if (imgStr == null) // 图像数据为空
             return "null?";
 
@@ -29,18 +29,24 @@ public class ImageConversion {
                     bytes[i] += 256;
                 }
             }
-            String localPath = "F:/uploadphoto";
+            //String localPath = "F:/uploadphoto";
 
             String imgFilePath = localPath + "/" + filename + ".png";
+            //String imgFilePath = "./" + filename + ".png";
 
             // 生成jpeg图片
 
-           OutputStream out = new FileOutputStream(imgFilePath);
+            File dest = new File(imgFilePath);
+
+            //判断文件父目录是否存在
+            if(!dest.getParentFile().exists()){
+                dest.getParentFile().mkdir();
+            }
+
+           OutputStream out = new FileOutputStream(dest);
             out.write(bytes);
             out.flush();
             out.close();
-
-
 
             byte[] data = null;
 

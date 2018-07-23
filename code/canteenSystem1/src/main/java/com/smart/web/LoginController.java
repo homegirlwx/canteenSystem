@@ -3,25 +3,35 @@ package com.smart.web;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.smart.domain.User;
 import com.smart.service.UserService;
+import com.smart.web.createjson.JsonResult;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Random;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import sun.misc.BASE64Decoder;
+
 
 @RestController
 public class LoginController{
@@ -29,6 +39,14 @@ public class LoginController{
 
     private final ResourceLoader resourceLoader;
     //private AtomicLong atomiclong ;
+
+    Random random = new Random();
+
+    //private Logger logger = Logger.getLogger(LoginController.class);
+
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     public LoginController(ResourceLoader resourceLoader) {
@@ -38,7 +56,8 @@ public class LoginController{
     @Value("${web.upload-path}")
     private String path;
 
-
+    @Value("${web.posturl}")
+    private String posturl;
 
     @RequestMapping(value = "/loginCheck")
     public User loginCheck(HttpServletRequest request,LoginCommand loginCommand){
@@ -47,7 +66,7 @@ public class LoginController{
         if (!isValidUser) {
             return null;
         } else {
-            User user = userService.findUserByUserName(loginCommand
+            User user = userService.findUserByUserAlias(loginCommand
                     .getUserName());
             user.setLastIp(request.getLocalAddr());
             user.setLastVisit(new Date());
@@ -63,13 +82,13 @@ public class LoginController{
      * @param file
      * @return
      */
-    @RequestMapping(value = "/Photo", method = RequestMethod.POST)
+    @RequestMapping(value = "/showPhoto", method = RequestMethod.POST)
     public String handleFileUpload(@RequestParam("fileName") MultipartFile file,  Map<String, Object> map) {
 
         if (!file.isEmpty()) {
 
             // 要上传的目标文件存放路径
-            String localPath = "F:/uploadphoto";
+            String localPath = path;
             // 上传成功或者失败的提示
             String msg = "";
 
@@ -88,16 +107,17 @@ public class LoginController{
         }
     }
 
-    @RequestMapping(value = "/uploadPhoto", produces = "application/json;charset=UTF-8")
+    //通过web上传并存储图片
+    @RequestMapping(value = "/uploadPhoto", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public JsonImage sc( String sj ) throws Exception {
-        //String filename = String.valueOf(atomiclong.getAndIncrement());
         System.out.println(sj);
-        String filename = "20180720";
-        return new JsonImage(ImageConversion.GenerateImage(sj, filename));
+        String filename = FileNameUtils.getFileName();
+        //ResponseEntity<String> rst = restTemplate.postForEntity(postUrl, request, String.class);
+        return new JsonImage(ImageConversion.GenerateImage(sj, filename, path));
     }
 
     //显示图片
-    @RequestMapping(value = "show", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/show", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<?> showPhotos() {
         try {
             // 由于是读取本机的文件，file是一定要加上的， path是在application配置文件中的路径
@@ -111,4 +131,86 @@ public class LoginController{
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
+
+
+    /**
+     * @createtime 2017年8月20日17:15:41
+     * @param request
+     * @param file
+     * @return 上传成功返回“success”，上传失败返回“error”
+     * @throws IOException
+     */
+
+    @RequestMapping(value = "/uploadfromwechat", method = RequestMethod.POST)
+    public String uploadfromwechat(HttpServletRequest request, @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+        //System.out.println("执行upload");
+        request.setCharacterEncoding("UTF-8");
+        //System.out.println("执行图片上传");
+        if(!file.isEmpty()) {
+
+            System.out.println("成功获取照片");
+            String fileName = file.getOriginalFilename();
+            String filepath = null;
+            String type = null;
+            type = fileName.indexOf(".") != -1 ? fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()) : null;
+            System.out.println("图片初始名称为：" + fileName + " 类型为：" + type);
+            if (type != null) {
+                if ("GIF".equals(type.toUpperCase())||"PNG".equals(type.toUpperCase())||"JPG".equals(type.toUpperCase())) {
+                    // 项目在容器中实际发布运行的根路径
+                    //String realPath = request.getSession().getServletContext().getRealPath("/");
+                    String realPath = path;
+                    // 自定义的文件名称
+                    String trueFileName = String.valueOf(System.currentTimeMillis()) + fileName;
+                    // 设置存放图片文件的路径
+                    //path = realPath + "/uploads/" + trueFileName;
+                    filepath = realPath + trueFileName;
+                    //System.out.println("存放图片文件的路径:" + filepath);
+
+                    File dest = new File(filepath);
+                    //判断文件父目录是否存在
+                    if(!dest.getParentFile().exists()){
+                        dest.getParentFile().mkdir();
+                    }
+
+                    try {
+                        //保存文件
+                        file.transferTo(dest);
+                        return "saved";
+                    } catch (IllegalStateException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        return "IllegalStateException";
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        return "IOExceptio";
+                    }
+                    //file.transferTo(new File(filepath));
+                    //System.out.println("文件成功上传到指定目录下");
+
+                    //调用后端图像识别服务
+                   // FileSystemResource resource = new FileSystemResource(new File(filepath));
+                    //MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+                    //param.add("file", resource);
+
+                    //JsonResult res = restTemplate.postForObject(posturl, param, JsonResult.class);
+
+
+                   // return "success!";
+                }else {
+                    //System.out.println("不是我们想要的文件类型,请按要求重新上传");
+                    return "error";
+                }
+            }else {
+                //System.out.println("文件类型为空");
+                return "error";
+            }
+        }else {
+            //System.out.println("没有找到相对应的文件");
+            return "error";
+        }
+        //return "success";
+    }
+
+
 }
