@@ -3,6 +3,16 @@ package com.smart.domain;
 import java.io.Serializable;
 
 public class Food implements Serializable {
+    public int getFoodId() {
+        return foodId;
+    }
+
+    public void setFoodId(int foodId) {
+        this.foodId = foodId;
+    }
+
+    private int foodId;
+
     private String foodName;
 
     private Double foodPrice;

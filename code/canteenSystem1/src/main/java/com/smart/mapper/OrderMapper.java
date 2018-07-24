@@ -12,7 +12,7 @@ public interface OrderMapper {
         Order findByOrderId(@Param("orderId") String orderId);
 
         @Select("SELECT * FROM orders WHERE userId = #{userId}")
-        List<Order> findByUserId(@Param("userId") String userId);
+        List<Order> findByUserId(@Param("userId") int userId);
 
         @Insert("INSERT INTO orders (payment, paymentType, paymentStatus, createTime, userId) VALUES(#{payment}, #{paymentType},  #{paymentStatus},  #{createTime},  #{userId})")
         @Options(useGeneratedKeys = true, keyProperty = "orderId", keyColumn = "orderId")

@@ -14,9 +14,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootApplication
 public class Application {
@@ -35,26 +38,28 @@ public class Application {
     @Bean
     public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
         return args -> {
-            Quote quote = restTemplate.getForObject(
-                    "http://gturnquist-quoters.cfapps.io/api/random", Quote.class);
-            log.info(quote.toString());
+            //Quote quote = restTemplate.getForObject(
+             //       "http://gturnquist-quoters.cfapps.io/api/random", Quote.class);
+            //log.info(quote.toString());
 
-            String filepath = "C:/Users/homegirl/Pictures/2018-7-20 131151 4.jpg";
-            String posturl = "http://test-123123.azurewebsites.net/Food/Get";
-            FileSystemResource resource = new FileSystemResource(new File(filepath));
+            String filepath = "C:/Users/homegirl/Pictures/20180724193129.jpg";
+            String posturl = "http://canteemsystem1.chinacloudsites.cn/uploadfromwechat";
+            //String posturl = "http://test-123123.azurewebsites.net/Food/Get";
+            FileSystemResource resource = new FileSystemResource(filepath);
             //File resource = new File(filepath);
             //OutputStream outputStream = new FileOutputStream(new File(filepath));
             MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+            //Map<String, Object> param = new HashMap<>();
             param.add("file1", resource);
             //param.add("file1", outputStream);
             //System.out.println(resource.contentLength());
             ResponseEntity<String> res = restTemplate.postForEntity(posturl, param, String.class);
-
+            //ResponseEntity<String> res = restTemplate.postForEntity(posturl,param , String.class, param);
             //JsonResult res = restTemplate.postForObject(posturl, param, JsonResult.class);
 
-            String s = restTemplate.getForObject(posturl, String.class);
+            //String s = restTemplate.getForObject(posturl, String.class);
             log.info(res.toString());
-            log.info(s);
+            //log.info(s);
         };
     }
 }
