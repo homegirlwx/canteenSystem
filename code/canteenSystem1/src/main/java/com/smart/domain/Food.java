@@ -7,6 +7,13 @@ public class Food implements Serializable {
 
     private Double foodPrice;
 
+    public Food(){}
+
+    public Food(String foodName, double foodPrice){
+        this.foodName = foodName;
+        this.foodPrice = foodPrice;
+    }
+
     public Double getFoodPrice() {
         return foodPrice;
     }
@@ -21,5 +28,10 @@ public class Food implements Serializable {
 
     public void setFoodName(String foodName) {
         this.foodName = foodName;
+    }
+
+    @Override
+    public String toString(){
+        return "foodName = " + foodName + " foodPrice" + foodPrice;
     }
 }

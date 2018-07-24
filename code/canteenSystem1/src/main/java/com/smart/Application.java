@@ -1,4 +1,5 @@
 package com.smart;
+import com.smart.mapper.FoodMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -9,7 +10,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -18,9 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 
-//@Configuration
-//@ComponentScan
-//@EnableAutoConfiguration
 @SpringBootApplication
 @EnableTransactionManagement
 public class Application  extends SpringBootServletInitializer implements WebApplicationInitializer {
@@ -31,6 +28,12 @@ public class Application  extends SpringBootServletInitializer implements WebApp
         SpringApplication.run(Application.class, args);
     }
 
+    final private FoodMapper foodMapper ;
+
+
+    public Application ( FoodMapper foodMapper){
+        this.foodMapper = foodMapper;
+    }
 
     @Bean
     public PlatformTransactionManager txManager(DataSource dataSource) {

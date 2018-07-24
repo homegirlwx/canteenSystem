@@ -1,25 +1,14 @@
 package com.smart.web;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.smart.domain.User;
-import com.smart.service.UserService;
-import com.smart.web.createjson.JsonResult;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 
@@ -35,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LoginController{
-    private UserService userService;
 
     private final ResourceLoader resourceLoader;
     //private AtomicLong atomiclong ;
@@ -61,19 +49,19 @@ public class LoginController{
 
     @RequestMapping(value = "/loginCheck")
     public User loginCheck(HttpServletRequest request,LoginCommand loginCommand){
-        boolean isValidUser =  userService.hasMatchUser(loginCommand.getUserName(),
-                loginCommand.getPassword());
-        if (!isValidUser) {
+        //boolean isValidUser =  userService.hasMatchUser(loginCommand.getUserName(),
+           //     loginCommand.getPassword());
+        //if (!isValidUser) {
+         //   return null;
+        //} else {
+            //User user = userService.findUserByUserAlias(loginCommand
+                 //   .getUserName());
+           // user.setLastIp(request.getLocalAddr());
+           // user.setLastVisit(new Date());
+            //userService.loginSuccess(user);
+           // request.getSession().setAttribute("user", user);
             return null;
-        } else {
-            User user = userService.findUserByUserAlias(loginCommand
-                    .getUserName());
-            user.setLastIp(request.getLocalAddr());
-            user.setLastVisit(new Date());
-            userService.loginSuccess(user);
-            request.getSession().setAttribute("user", user);
-            return user;
-        }
+        //}
     }
 
     /**
@@ -127,10 +115,6 @@ public class LoginController{
         }
     }
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
 
     /**
@@ -148,7 +132,6 @@ public class LoginController{
         //System.out.println("执行图片上传");
         if(!file.isEmpty()) {
 
-            System.out.println("成功获取照片");
             String fileName = file.getOriginalFilename();
             String filepath = null;
             String type = null;
@@ -157,21 +140,16 @@ public class LoginController{
             if (type != null) {
                 if ("GIF".equals(type.toUpperCase())||"PNG".equals(type.toUpperCase())||"JPG".equals(type.toUpperCase())) {
                     // 项目在容器中实际发布运行的根路径
-                    //String realPath = request.getSession().getServletContext().getRealPath("/");
                     String realPath = path;
                     // 自定义的文件名称
                     String trueFileName = String.valueOf(System.currentTimeMillis()) + fileName;
                     // 设置存放图片文件的路径
-                    //path = realPath + "/uploads/" + trueFileName;
                     filepath = realPath + trueFileName;
-                    //System.out.println("存放图片文件的路径:" + filepath);
-
                     File dest = new File(filepath);
                     //判断文件父目录是否存在
                     if(!dest.getParentFile().exists()){
                         dest.getParentFile().mkdir();
                     }
-
                     try {
                         //保存文件
                         file.transferTo(dest);
@@ -185,8 +163,6 @@ public class LoginController{
                         e.printStackTrace();
                         return "IOExceptio";
                     }
-                    //file.transferTo(new File(filepath));
-                    //System.out.println("文件成功上传到指定目录下");
 
                     //调用后端图像识别服务
                    // FileSystemResource resource = new FileSystemResource(new File(filepath));
